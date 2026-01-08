@@ -3,15 +3,8 @@ import { GoogleGenAI } from "@google/genai";
 import { SYSTEM_INSTRUCTION, GEMINI_MODEL } from "../constants";
 
 export async function generateWPBakeryBlock(prompt: string): Promise<string> {
-  // Acesso seguro para evitar ReferenceError no browser
-  const env = (typeof process !== 'undefined' && process.env) ? process.env : (window as any).process?.env;
-  const apiKey = env?.API_KEY;
-  
-  if (!apiKey) {
-    throw new Error("API_KEY não configurada no ambiente. Verifique as configurações da Vercel.");
-  }
-
-  const ai = new GoogleGenAI({ apiKey });
+  // Inicialização direta conforme as diretrizes da SDK
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
     const response = await ai.models.generateContent({
@@ -25,11 +18,17 @@ export async function generateWPBakeryBlock(prompt: string): Promise<string> {
       },
     });
 
+    // O texto é extraído via propriedade .text
     const code = response.text || "";
-    // Limpeza de blocos de código Markdown que o modelo possa retornar por engano
+    
+    // Remove delimitadores de markdown se o modelo os incluir
     return code.replace(/```[a-z]*\n/g, '').replace(/\n```/g, '').trim();
-  } catch (error) {
-    console.error("Error generating block:", error);
+  } catch (error: any) {
+    console.error("Erro na API Gemini:", error);
+    // Erros específicos de autenticação são comuns se a chave não estiver no environment
+    if (error.message?.includes('API_KEY')) {
+      throw new Error("Erro de Autenticação: Verifique se a API_KEY foi configurada corretamente nas variáveis de ambiente da Vercel.");
+    }
     throw error;
   }
 }

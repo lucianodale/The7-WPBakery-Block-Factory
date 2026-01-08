@@ -7,6 +7,10 @@
     <title>The7 & WPBakery Block Factory</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+      // Shim para evitar erro de 'process is not defined' no browser
+      window.process = window.process || { env: {} };
+    </script>
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -43,7 +47,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Carregamento do módulo principal -->
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>
