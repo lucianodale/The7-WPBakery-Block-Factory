@@ -3,9 +3,12 @@ import { GoogleGenAI } from "@google/genai";
 import { SYSTEM_INSTRUCTION, GEMINI_MODEL } from "../constants";
 
 export async function generateWPBakeryBlock(prompt: string): Promise<string> {
-  const apiKey = process.env.API_KEY;
+  // Acesso seguro para evitar ReferenceError no browser
+  const env = (typeof process !== 'undefined' && process.env) ? process.env : (window as any).process?.env;
+  const apiKey = env?.API_KEY;
+  
   if (!apiKey) {
-    throw new Error("API Key not found");
+    throw new Error("API_KEY não configurada no ambiente. Verifique as configurações da Vercel.");
   }
 
   const ai = new GoogleGenAI({ apiKey });
@@ -23,7 +26,7 @@ export async function generateWPBakeryBlock(prompt: string): Promise<string> {
     });
 
     const code = response.text || "";
-    // Sanitize in case Gemini includes markdown code blocks
+    // Limpeza de blocos de código Markdown que o modelo possa retornar por engano
     return code.replace(/```[a-z]*\n/g, '').replace(/\n```/g, '').trim();
   } catch (error) {
     console.error("Error generating block:", error);
