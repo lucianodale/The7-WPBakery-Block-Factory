@@ -1,0 +1,7 @@
+{
+  "name": "The7 & WPBakery Block Factory",
+  "description": "A professional tool for generating copy-paste ready WPBakery Visual Composer shortcodes optimized for The7 theme and Ultimate Addons.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
